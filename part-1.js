@@ -11,42 +11,75 @@ const gameOn = rs.keyIn("Press any key to start");
 //  }
 
 class gameMap {
-  constructor(battleMap) {
-  this.battleMap= battleMap;
+  constructor(battleMap, mapSize, alphabet) {
+    this.battleMap = battleMap;
+    this.mapSize = mapSize;
+    this.alphabetr = alphabet;
+  }
+
+  mapping() {
+    this.battleMap = {};
+    const char = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
+    this.alphabet = char.split("");
+    this.mapSize = 4;
+    for (let lat = 0; lat < this.mapSize; lat++) {
+      for (let long = 1; long <= this.mapSize; long++) {
+        let coordinate = this.alphabet[lat] + long;
+        this.battleMap[`${coordinate}`] = null;
+      }
+    }
+
+    return this.battleMap;
+  }
+}
+
+class placement extends gameMap {
+  constructor(ship, spot) {
+    super();
+    this.battleMap = this.mapping();
+    this.ship = ship;
+    this.spot = spot;
+  }
+  randomPlace() {
+    const lat = this.alphabet[Math.floor(Math.random() * this.mapSize)];
+    const long = Math.floor(Math.random() * this.mapSize + 1);
+    const coordinate = lat + long;
+    return coordinate;
+  }
+  place() {
+    this.battleMap[this.randomPlace()] = "destroyer";
+    this.battleMap[this.randomPlace()] = "battleship";
+    return this.battleMap;
+  }
+}
+
+const placing = new placement();
+
+console.log(placing.place());
+
+class Strike extends placement {
+  constructor(attack) {
+    super();
+    this.attack = attack;
+    this.placer = this.place()
+  }
+  strike() {
+    this.attack = rs.question("Enter a location to strike ie A2: ");
+
+    if (this.placer[this.attack.toUpperCase()] !== null) {
+      console.log("hit");
+      this.placer[this.attack.toUpperCase()] = "O";
+     
+    } else {
+      console.log("Miss");
+      this.placer[this.attack.toUpperCase()] = "X";
+    
+    }
+return this.placer;
   
   }
-
-mapping(){
-  this.battleMap ={};
-  const char = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
-  let alphabet = char.split("");
-  const mapSize = 4;
-  for (let lat = 0; lat < mapSize; lat++) {
-    for (let long = 1; long <= mapSize; long++) {
-      let coordinate = alphabet[lat] + long;
-      this.battleMap[`${coordinate}`] = null;
-    }
-  }
- 
-  return this.battleMap;
-}
-};
-
-class Strike extends gameMap {
-constructor(){
- super();
-this.battleMap= this.mapping();
-}
-strike(){
-this.battleMap.A1 ='X';
-  return this.battleMap;
-}
 }
 
-
- new gameMap();
-
-const striker= new Strike;
-
+const striker = new Strike();
 
 console.log(striker.strike());
