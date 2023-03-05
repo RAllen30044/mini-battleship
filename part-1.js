@@ -14,7 +14,7 @@ class gameMap {
   constructor(battleMap, mapSize, alphabet) {
     this.battleMap = battleMap;
     this.mapSize = mapSize;
-    this.alphabetr = alphabet;
+    this.alphabet = alphabet;
   }
 
   mapping() {
@@ -51,35 +51,46 @@ class placement extends gameMap {
     this.battleMap[this.randomPlace()] = "battleship";
     return this.battleMap;
   }
+  fieldMap(){
+    return this.battleMap;
+  }
 }
 
-const placing = new placement();
 
-console.log(placing.place());
 
 class Strike extends placement {
   constructor(attack) {
     super();
     this.attack = attack;
-    this.placer = this.place()
+    this.placer = this.fieldMap();
   }
   strike() {
+    this.place();
+   console.log(this.placer);
+
     this.attack = rs.question("Enter a location to strike ie A2: ");
 
     if (this.placer[this.attack.toUpperCase()] !== null) {
-      console.log("hit");
+      
       this.placer[this.attack.toUpperCase()] = "O";
+      return 'Hit';
      
     } else {
-      console.log("Miss");
+     
       this.placer[this.attack.toUpperCase()] = "X";
-    
+      return 'Miss';
     }
-return this.placer;
+
   
   }
+  veiw(){
+    return this.placer;
+  }
 }
+
+
 
 const striker = new Strike();
 
 console.log(striker.strike());
+console.log(striker.veiw());
