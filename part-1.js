@@ -1,14 +1,6 @@
 var rs = require("readline-sync");
 
-const gameOn = rs.keyIn("Press any key to start");
 
-//  while(gameOn){
-//     const endGame= rs.keyInYN('Would you like to play again? ');
-//       //Replace e with End game requirement
-//       if(endGame === 'N'){
-//             return ;
-//       }
-//  }
 
 class gameMap {
   constructor(battleMap, mapSize, alphabet) {
@@ -29,36 +21,31 @@ class gameMap {
     return this.battleMap;
   }
 }
-// const game = new gameMap();
-// console.log(game.mapping());
+
 
 class placement extends gameMap {
   constructor(coordinate) {
     super();
     this.battleMap = this.mapping();
     this.coordinate = coordinate;
-    this.shipsFighting = [];
   }
   randomPlace() {
     const lat = this.alphabet[Math.floor(Math.random() * this.mapSize)];
     const long = Math.floor(Math.random() * this.mapSize + 1);
     this.coordinate = lat + long;
-    if (this.battleMap[this.coordinate] !== null) {
-      while (this.battleMap[this.coordinate] !== null) {
-        const lats = this.alphabet[Math.floor(Math.random() * this.mapSize)];
-        const longs = Math.floor(Math.random() * this.mapSize + 1);
-        console.log(this.battleMap[this.coordinate]);
-        console.log(this.coordinate + " me");
-        this.coordinate = lats + longs;
-      }
+    while (this.battleMap[this.coordinate] !== null) {
+      const lats = this.alphabet[Math.floor(Math.random() * this.mapSize)];
+      const longs = Math.floor(Math.random() * this.mapSize + 1);
+      console.log(this.battleMap[this.coordinate]);
+      console.log(this.coordinate + " me");
+      this.coordinate = lats + longs;
     }
     return this.coordinate;
   }
   postRandomPlaceCheck(ship) {
     let target = this.randomPlace();
     this.battleMap[target] = ship;
-    console.log(target);
-    console.log(ship);
+
   }
   place() {
     this.postRandomPlaceCheck("destroyer");
@@ -68,76 +55,103 @@ class placement extends gameMap {
     this.postRandomPlaceCheck("submarine");
     return this.battleMap;
   }
-  shipsview() {
-    return this.shipsFighting;
-  }
+
   fieldMap() {
     return this.battleMap;
   }
 }
-const place = new placement();
-// console.log(place.randomPlace());
-console.log(place.place());
-// // console.log(place.shipsview());
+
 
 class Strike extends placement {
-  constructor(attack) {
+  constructor(attack, theSpot) {
     super();
-    this.attack = attack;
+    attack, (theSpot = this);
     this.placer = this.fieldMap();
     this.battleships = ["battleship"];
     this.destroyers = ["destroyer"];
-    this.shipsFighting = this.shipsview();
+    this.cruisers = ["cruiser"];
+    this.carriers = ["carrier"];
+    this.submarines = ["submarine"];
+    // this.shipsFighting = this.shipsview();
   }
   veiw() {
     return this.place();
   }
-  //   strike() {
-  //     const placesAttacked = [];
-  //     this.place();
-  //     console.log(this.placer);
-  //     while (this.destroyers.length > 0 || this.battleships.length > 0) {
-  //       this.attack = rs.question("Enter a location to strike ie A2: ");
-  //         if(placesAttacked.includes(theSpot)){
-  //           console.log('Already selected that coordinate.Miss');
-  //           return;
-  //         }
-  //       if (
-  //         this.placer[this.attack] === "X" ||
-  //         this.placer[this.attack] === "O"
-  //       ) {
-  //         console.log("Selection invalid, try again");
-  //         this.attack = rs.question("Enter a coordinate to strike (ie... A2): ");
-  //       }
-  //       let theSpot = this.attack.toUpperCase();
-  //       if (this.placer[theSpot] !== null) {
-  //         switch (this.placer[theSpot]) {
-  //           case "destroyer":
-  //             this.destroyers.pop();
-  //             break;
-  //           case "battleship":
-  //             this.battleships.pop();
-  //             break;
+  strike() {
+    const placesAttacked = [];
+    this.place();
+    // console.log(this.placer);
+    console.log(this.veiw());
+    while (
+      this.destroyers.length > 0 ||
+      this.battleships.length > 0 ||
+      this.cruisers.length > 0 ||
+      this.submarines.length > 0 ||
+      this.carriers.length > 0
+    ) {
+      this.attack = rs.question("Enter a location to strike ie A2: ");
+      this.theSpot = this.attack.toUpperCase();
+     
+      while (placesAttacked.includes(this.theSpot)) {
+        console.log("Already selected that coordinate.....Miss!!");
+        this.attack = rs.question("Enter a location to strike ie A2: ");
+        this.theSpot = this.attack.toUpperCase();
+      }
 
-  //           default:
-  //             console.log(`error`);
-  //             break;
-  //         }
+      if (this.placer[this.theSpot] !== null) {
+        switch (this.placer[this.theSpot]) {
+          case "destroyer":
+            this.destroyers.pop();
+            break;
+          case "battleship":
+            this.battleships.pop();
+            break;
+          case "cruiser":
+            this.cruisers.pop();
+            break;
+          case "submarine":
+            this.submarines.pop();
+            break;
+          case "carrier":
+            this.carriers.pop();
+            break;
 
-  //         this.placer[theSpot] = "O";
-  //         console.log("Hit");
-  //       } else {
-  //         this.placer[theSpot] = "X";
-  //         console.log("Miss");
-  //       }
-  //     }
-  //     placesAttacked.push(theSpot)
-  //     console.log(this.veiw());
-  //   }
-  //   veiw() {
-  //     return this.placer;
-  //   }
+          default:
+            console.log(`error`);
+            break;
+        }
+
+        this.placer[this.theSpot] = "O";
+        console.log("Hit");
+        placesAttacked.push(this.theSpot);
+        console.log(this.veiw());
+      } else {
+        this.placer[this.theSpot] = "X";
+        console.log("Miss");
+        placesAttacked.push(this.theSpot);
+        console.log(this.veiw());
+      }
+    }
+    placesAttacked.push(this.theSpot);
+  
+  }
+ veiw() {
+    return this.placer;
+   }
 }
-//const striker = new Strike();
-// console.log(striker.strike());
-//console.log(striker.veiw());
+
+
+const gameOn = rs.keyIn("Press any key to start");
+
+ while(gameOn){
+const striker = new Strike();
+console.log(striker.strike());
+  const endGame= rs.keyInYN('Would you like to play again? ');
+  //Replace e with End game requirement
+  
+  if(endGame === false){
+        return ;
+  }
+}
+
+
