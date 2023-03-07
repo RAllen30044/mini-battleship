@@ -59,7 +59,7 @@ class placement extends gameMap {
 class Strike extends placement {
   constructor(attack, theSpot) {
     super();
-    attack, (theSpot = this);
+    attack, theSpot = this;
     this.placer = this.fieldMap();
     this.battleships = ["battleship"];
     this.destroyers = ["destroyer"];
@@ -144,28 +144,28 @@ class Strike extends placement {
         this.placer[this.theSpot] = "X";
         console.log("Miss");
         placesAttacked.push(this.theSpot);
-        console.log(this.veiw());
+        //console.log(this.veiw());
       }
     }
-    placesAttacked.push(this.theSpot);
+    // placesAttacked.push(this.theSpot);
   }
   veiw() {
     return this.placer;
   }
 }
-const striker = new Strike();
+ const striker = new Strike();
+ console.log(striker.strike());
 
 
+// const gameOn = rs.keyIn("Press any key to start");
 
-const gameOn = rs.keyIn("Press any key to start");
+// while (gameOn) {
+//   const striker = new Strike();
+//   console.log(striker.strike());
+//   const endGame = rs.keyInYN("Would you like to play again? ");
+//   //Replace e with End game requirement
 
-while (gameOn) {
-  const striker = new Strike();
-  console.log(striker.strike());
-  const endGame = rs.keyInYN("Would you like to play again? ");
-  //Replace e with End game requirement
-
-  if (endGame === false) {
-    return;
-  }
-}
+//   if (endGame === false) {
+//     return;
+//   }
+// }
