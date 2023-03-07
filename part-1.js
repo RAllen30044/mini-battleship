@@ -1,7 +1,5 @@
 var rs = require("readline-sync");
 
-
-
 class gameMap {
   constructor(battleMap, mapSize, alphabet) {
     battleMap, mapSize, (alphabet = this);
@@ -21,7 +19,6 @@ class gameMap {
     return this.battleMap;
   }
 }
-
 
 class placement extends gameMap {
   constructor(coordinate) {
@@ -45,7 +42,6 @@ class placement extends gameMap {
   postRandomPlaceCheck(ship) {
     let target = this.randomPlace();
     this.battleMap[target] = ship;
-
   }
   place() {
     this.postRandomPlaceCheck("destroyer");
@@ -53,14 +49,12 @@ class placement extends gameMap {
     this.postRandomPlaceCheck("cruiser");
     this.postRandomPlaceCheck("carrier");
     this.postRandomPlaceCheck("submarine");
-    return this.battleMap;
   }
 
   fieldMap() {
     return this.battleMap;
   }
 }
-
 
 class Strike extends placement {
   constructor(attack, theSpot) {
@@ -74,9 +68,7 @@ class Strike extends placement {
     this.submarines = ["submarine"];
     // this.shipsFighting = this.shipsview();
   }
-  veiw() {
-    return this.place();
-  }
+
   strike() {
     const placesAttacked = [];
     this.place();
@@ -91,13 +83,17 @@ class Strike extends placement {
     ) {
       this.attack = rs.question("Enter a location to strike ie A2: ");
       this.theSpot = this.attack.toUpperCase();
-     
+
       while (placesAttacked.includes(this.theSpot)) {
         console.log("Already selected that coordinate.....Miss!!");
         this.attack = rs.question("Enter a location to strike ie A2: ");
         this.theSpot = this.attack.toUpperCase();
       }
-
+      while (!Object.keys(striker.veiw()).includes(this.theSpot)) {
+        console.log("Coordinate Out of Bounds");
+        this.attack = rs.question("Enter a location to strike ie A2: ");
+        this.theSpot = this.attack.toUpperCase();
+      }
       if (this.placer[this.theSpot] !== null) {
         switch (this.placer[this.theSpot]) {
           case "destroyer":
@@ -123,6 +119,25 @@ class Strike extends placement {
 
         this.placer[this.theSpot] = "O";
         console.log("Hit");
+
+        if (
+          this.destroyers.length === 0 ||
+          this.battleships.length === 0 ||
+          this.cruisers.length === 0 ||
+          this.submarines.length === 0 ||
+          this.carriers.length === 0
+        ) {
+          console.log(`You have sunken one of my ships!!!`);
+        }
+        if (
+          this.destroyers.length === 0 &&
+          this.battleships.length === 0 &&
+          this.cruisers.length === 0 &&
+          this.submarines.length === 0 &&
+          this.carriers.length === 0
+        ) {
+          console.log(`Actually, You have sunken all of my ships!!!`);
+        }
         placesAttacked.push(this.theSpot);
         console.log(this.veiw());
       } else {
@@ -133,25 +148,24 @@ class Strike extends placement {
       }
     }
     placesAttacked.push(this.theSpot);
-  
   }
- veiw() {
+  veiw() {
     return this.placer;
-   }
+  }
 }
+const striker = new Strike();
+
 
 
 const gameOn = rs.keyIn("Press any key to start");
 
- while(gameOn){
-const striker = new Strike();
-console.log(striker.strike());
-  const endGame= rs.keyInYN('Would you like to play again? ');
+while (gameOn) {
+  const striker = new Strike();
+  console.log(striker.strike());
+  const endGame = rs.keyInYN("Would you like to play again? ");
   //Replace e with End game requirement
-  
-  if(endGame === false){
-        return ;
+
+  if (endGame === false) {
+    return;
   }
 }
-
-
