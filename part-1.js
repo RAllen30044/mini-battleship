@@ -46,9 +46,6 @@ class placement extends gameMap {
   place() {
     this.postRandomPlaceCheck("destroyer");
     this.postRandomPlaceCheck("battleship");
-    this.postRandomPlaceCheck("cruiser");
-    this.postRandomPlaceCheck("carrier");
-    this.postRandomPlaceCheck("submarine");
   }
 
   fieldMap() {
@@ -57,30 +54,20 @@ class placement extends gameMap {
 }
 
 class Strike extends placement {
-  constructor(attack, theSpot) {
+  constructor(attack, theSpot, shipsAmount) {
     super();
-    attack, theSpot = this;
+    attack, theSpot, shipsAmount = this;
     this.placer = this.fieldMap();
     this.battleships = ["battleship"];
     this.destroyers = ["destroyer"];
-    this.cruisers = ["cruiser"];
-    this.carriers = ["carrier"];
-    this.submarines = ["submarine"];
-    // this.shipsFighting = this.shipsview();
+    
   }
 
   strike() {
     const placesAttacked = [];
     this.place();
-    // console.log(this.placer);
-    console.log(this.veiw());
-    while (
-      this.destroyers.length > 0 ||
-      this.battleships.length > 0 ||
-      this.cruisers.length > 0 ||
-      this.submarines.length > 0 ||
-      this.carriers.length > 0
-    ) {
+ this.shipsAmount=2;
+    while (this.destroyers.length > 0 || this.battleships.length > 0) {
       this.attack = rs.question("Enter a location to strike ie A2: ");
       this.theSpot = this.attack.toUpperCase();
 
@@ -89,7 +76,7 @@ class Strike extends placement {
         this.attack = rs.question("Enter a location to strike ie A2: ");
         this.theSpot = this.attack.toUpperCase();
       }
-      while (!Object.keys(striker.veiw()).includes(this.theSpot)) {
+      while (!Object.keys(this.veiw()).includes(this.theSpot)) {
         console.log("Coordinate Out of Bounds");
         this.attack = rs.question("Enter a location to strike ie A2: ");
         this.theSpot = this.attack.toUpperCase();
@@ -102,15 +89,6 @@ class Strike extends placement {
           case "battleship":
             this.battleships.pop();
             break;
-          case "cruiser":
-            this.cruisers.pop();
-            break;
-          case "submarine":
-            this.submarines.pop();
-            break;
-          case "carrier":
-            this.carriers.pop();
-            break;
 
           default:
             console.log(`error`);
@@ -120,52 +98,37 @@ class Strike extends placement {
         this.placer[this.theSpot] = "O";
         console.log("Hit");
 
-        if (
-          this.destroyers.length === 0 ||
-          this.battleships.length === 0 ||
-          this.cruisers.length === 0 ||
-          this.submarines.length === 0 ||
-          this.carriers.length === 0
-        ) {
-          console.log(`You have sunken one of my ships!!!`);
+        if (this.destroyers.length === 0 && this.battleships.length === 0) {
+          return `You have sunken all  battleships`;
         }
-        if (
-          this.destroyers.length === 0 &&
-          this.battleships.length === 0 &&
-          this.cruisers.length === 0 &&
-          this.submarines.length === 0 &&
-          this.carriers.length === 0
-        ) {
-          console.log(`Actually, You have sunken all of my ships!!!`);
+        if (this.destroyers.length === 0 || this.battleships.length === 0) {
+          console.log(`You have sunken a ship`);
+          this.shipsAmount--;
+          console.log(`${this.shipsAmount} ship remaining `)
+
         }
+
         placesAttacked.push(this.theSpot);
-        console.log(this.veiw());
       } else {
         this.placer[this.theSpot] = "X";
-        console.log("Miss");
+        console.log("You have missed!");
         placesAttacked.push(this.theSpot);
-        //console.log(this.veiw());
       }
     }
-    // placesAttacked.push(this.theSpot);
   }
   veiw() {
     return this.placer;
   }
 }
- const striker = new Strike();
- console.log(striker.strike());
 
+const gameOn = rs.keyIn("Press any key to start");
 
-// const gameOn = rs.keyIn("Press any key to start");
+while (gameOn) {
+  const striker = new Strike();
+  console.log(striker.strike());
+  const endGame = rs.keyInYN("Would you like to play again? ");
 
-// while (gameOn) {
-//   const striker = new Strike();
-//   console.log(striker.strike());
-//   const endGame = rs.keyInYN("Would you like to play again? ");
-//   //Replace e with End game requirement
-
-//   if (endGame === false) {
-//     return;
-//   }
-// }
+  if (endGame === false) {
+    return;
+  }
+}
